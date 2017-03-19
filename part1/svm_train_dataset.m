@@ -1,13 +1,12 @@
 % i try to create the positive/negative examples for svm training
-% #justForAirplanes
-
 cluster_number = 400;
-imagesPerFolder = 100;
 dataset_dir = '../Caltech4/ImageData/';
 contents = dir(dataset_dir); % all the image folders
 
-train_positives = [];
-train_negatives = [];
+training_airplanes = [];
+training_cars = [];
+training_faces = [];
+training_motorbikes = [];
 
 % loop over all the folders
 for i = 1:numel(contents)
@@ -15,8 +14,9 @@ for i = 1:numel(contents)
     if contains(foldername, 'train')
         folder_contents = dir(strcat(dataset_dir, foldername, '/*.jpg'));
         disp(foldername)
-         % loop over all the files in each folder
-        for j=1:imagesPerFolder
+        
+        % loop over all the files in each folder
+        for j=1:numel(folder_contents)
             filename = folder_contents(j).name;
 
             image = imread(strcat(dataset_dir, foldername, '/', filename));
@@ -25,20 +25,25 @@ for i = 1:numel(contents)
             else
                 image = single(image);
             end
-
+            
+            % generate the histogram for the specific image and put it in
+            % the right matrix
             [~, d] = sift('grayscale', image);
             h = descriptorToHistogram(cluster_number, C, d);
-            
             if contains(foldername, 'airplanes')
-                train_positives = [train_positives; h];
-            else
-                train_negatives = [train_negatives; h];
+                training_airplanes = [training_airplanes; h];
+            elseif contains(foldername, 'cars')
+                training_cars = [training_cars; h];
+            elseif contains(foldername, 'faces')
+                training_faces = [training_faces; h];
+            elseif contains(foldername, 'motorbikes')
+                training_motorbikes = [training_motorbikes; h];
             end
         end
     end
 end
-train_positives = double(train_positives);
-train_negatives = double(train_negatives);
 
-train_labels = [repmat(1,[imagesPerFolder 1]); repmat(0,[imagesPerFolder * 3 1])];
-train_data_matrix = sparse([train_positives;train_negatives]);
+save('data/training_airplanes.mat', 'training_airplanes');
+save('data/training_cars.mat', 'training_cars');
+save('data/training_faces.mat', 'training_faces');
+save('data/training_motorbikes.mat', 'training_motorbikes');

@@ -1,11 +1,20 @@
 % create a matrix with all the descriptors of the different images
-descriptors = loadDescriptors(80);
-size(descriptors);
+if exist('data/kmeans_descriptors.mat', 'file')
+    load('data/kmeans_descriptors.mat', 'descriptors');
+else
+    descriptors = loadDescriptors(100);
+    save('data/kmeans_descriptors.mat', 'descriptors');
+end
 
 % do k-means clustering of the descriptors, C is the centroids matrix
-% size(C) = 400x128
-clusters_number = 400; % clusters number
-[idx,C] = kmeans(descriptors', clusters_number);
+if exist('data/kmeans_clusters.mat', 'file')
+    load('data/kmeans_clusters.mat', 'C');
+else
+    clusters_number = 400; % clusters number
+    [idx,C] = kmeans(descriptors', clusters_number, 'Display', 'iter', 'MaxIter', 20);
+    save('data/kmeans_clusters.mat', 'C');
+end
+
 
 %%
 function [descriptors] = loadDescriptors(imagesPerFolder)
