@@ -19,10 +19,11 @@ opts.train = struct() ;
 opts = vl_argparse(opts, varargin) ;
 if ~isfield(opts.train, 'gpus'), opts.train.gpus = []; end;
 
-opts.train.gpus = [];
-% opts.train.gpus = [1];
+%gpu training is not installed
+%opts.train.gpus = [1];
 
 %% update model
+
 net = update_model();
 
 %% TODO: Implement getCaltechIMDB function below
@@ -75,12 +76,12 @@ end
 % -------------------------------------------------------------------------
 function imdb = getCaltechIMDB()
 % -------------------------------------------------------------------------
-% Preapre the imdb structure, returns image data with mean image subtracted
+% Prepare the imdb structure, returns image data with mean image subtracted
 classes = {'airplanes', 'cars', 'faces', 'motorbikes'};
 splits = {'train', 'test'};
 
 %% TODO: Implement your loop here, to create the data structure described in the assignment
-data = zeros(100, 152, 3, 2079);
+data = zeros(32, 32, 3, 2079);
 sets = [];
 labels = [];
 k=1;
@@ -132,10 +133,9 @@ for i = 1:numel(contents)
         sets(k) = set;
         labels(k) = label;
         k = k + 1;
-        disp(strcat(foldername, '/', filename))
     end
-    break
 end
+%%
 % subtract mean
 dataMean = mean(data(:, :, :, sets == 1), 4);
 data = bsxfun(@minus, data, dataMean);
@@ -150,5 +150,6 @@ perm = randperm(numel(imdb.images.labels));
 imdb.images.data = imdb.images.data(:,:,:, perm);
 imdb.images.labels = imdb.images.labels(perm);
 imdb.images.set = imdb.images.set(perm);
+
 
 end

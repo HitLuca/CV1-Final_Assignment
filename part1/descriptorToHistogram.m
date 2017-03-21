@@ -10,5 +10,5 @@ function [hist_bins] = descriptorToHistogram(cluster_number, clusters, descripto
         
         hist_bins(index) = hist_bins(index) + 1;
     end
-    hist_bins = hist_bins / d_number;
+    hist_bins = hist_bins ./ d_number;
 end
