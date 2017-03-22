@@ -5,7 +5,7 @@ function [hist_bins] = descriptorToHistogram(cluster_number, clusters, descripto
     hist_bins = zeros(1, cluster_number);
     for i=1:d_number
         descriptor = descriptors(i, :);
-        out = pdist2(clusters,descriptor);
+        out = pdist2(clusters, descriptor);
         [~, index] = min(out);
         
         hist_bins(index) = hist_bins(index) + 1;

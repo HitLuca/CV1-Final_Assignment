@@ -1,6 +1,6 @@
 clusters_number = 400; % clusters number
-totalImages = 150; % number of images to load per class
-kmeans_iterations = 20;
+totalImages = 250; % number of images to load per class
+kmeans_iterations = 100;
 
 kmeans_clusters_filename = char(strcat('data/preprocessing/kmeans_clusters', '_', string(clusters_number), '.mat'));
 kmeans_descriptors_filename = char(strcat('data/preprocessing/kmeans_descriptors', '_', string(totalImages), '.mat'));
