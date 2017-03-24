@@ -1,11 +1,15 @@
-if exist('data/training_data/training_airplanes.mat', 'file')
-    load('data/training_data/training_airplanes.mat', 'training_airplanes');
-    load('data/training_data/training_cars.mat', 'training_cars');
-    load('data/training_data/training_faces.mat', 'training_faces');
-    load('data/training_data/training_motorbikes.mat', 'training_motorbikes');
+training_airplanes_path = strcat(data_folder, 'training_data/training_airplanes.mat');
+training_cars_path = strcat(data_folder, 'training_data/training_cars.mat');
+training_faces_path = strcat(data_folder, 'training_data/training_faces.mat');
+training_motorbikes_path = strcat(data_folder, 'training_data/training_motorbikes.mat');
+
+if exist(training_airplanes_path, 'file')
+    load(training_airplanes_path, 'training_airplanes');
+    load(training_cars_path, 'training_cars');
+    load(training_faces_path, 'training_faces');
+    load(training_motorbikes_path, 'training_motorbikes');
 else
     % i try to create the positive/negative examples for svm training
-    clusters_number = 400;
     dataset_dir = '../Caltech4/ImageData/';
     contents = dir(dataset_dir); % all the image folders
 
@@ -26,15 +30,10 @@ else
                 filename = folder_contents(j).name;
 
                 image = imread(strcat(dataset_dir, foldername, '/', filename));
-                if size(image, 3) > 1
-                    image = single(rgb2gray(image));
-                else
-                    image = single(image);
-                end
 
                 % generate the histogram for the specific image and put it in
                 % the right matrix
-                [~, d] = sift('grayscale', image);
+                [~, d] = sift(sift_type, image);
                 h = descriptorToHistogram(clusters_number, C, d);
                 if contains(foldername, 'airplanes')
                     training_airplanes = [training_airplanes; h];
@@ -49,8 +48,8 @@ else
         end
     end
     
-    save('data/training_data/training_airplanes.mat', 'training_airplanes');
-    save('data/training_data/training_cars.mat', 'training_cars');
-    save('data/training_data/training_faces.mat', 'training_faces');
-    save('data/training_data/training_motorbikes.mat', 'training_motorbikes');
+    save(training_airplanes_path, 'training_airplanes');
+    save(training_cars_path, 'training_cars');
+    save(training_faces_path, 'training_faces');
+    save(training_motorbikes_path, 'training_motorbikes');
 end

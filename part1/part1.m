@@ -1,3 +1,12 @@
+sift_type = 'color';
+clusters_number = 400;
+data_folder = char(strcat('data/', string(sift_type), '/', string(clusters_number), '/'));
+
+mkdir(strcat(data_folder, 'models'));
+mkdir(strcat(data_folder, 'preprocessing'));
+mkdir(strcat(data_folder, 'testing_data'));
+mkdir(strcat(data_folder, 'training_data'));
+
 disp('PREPROCESSING');
 run('preprocessing.m');
 

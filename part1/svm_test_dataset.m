@@ -1,10 +1,14 @@
-if exist('data/testing_data/testing_airplanes.mat', 'file')
-    load('data/testing_data/testing_airplanes.mat', 'testing_airplanes');
-    load('data/testing_data/testing_cars.mat', 'testing_cars');
-    load('data/testing_data/testing_faces.mat', 'testing_faces');
-    load('data/testing_data/testing_motorbikes.mat', 'testing_motorbikes');
+testing_airplanes_path = strcat(data_folder, 'testing_data/testing_airplanes.mat');
+testing_cars_path = strcat(data_folder, 'testing_data/testing_cars.mat');
+testing_faces_path = strcat(data_folder, 'testing_data/testing_faces.mat');
+testing_motorbikes_path = strcat(data_folder, 'testing_data/testing_motorbikes.mat');
+
+if exist(testing_airplanes_path, 'file')
+    load(testing_airplanes_path, 'testing_airplanes');
+    load(testing_cars_path, 'testing_cars');
+    load(testing_faces_path, 'testing_faces');
+    load(testing_motorbikes_path, 'testing_motorbikes');
 else
-    clusters_number = 400;
     dataset_dir = '../Caltech4/ImageData/';
     contents = dir(dataset_dir); % all the image folders
 
@@ -25,13 +29,8 @@ else
                 filename = folder_contents(j).name;
 
                 image = imread(strcat(dataset_dir, foldername, '/', filename));
-                if size(image, 3) > 1
-                    image = single(rgb2gray(image));
-                else
-                    image = single(image);
-                end
 
-                [~, d] = sift('grayscale', image);
+                [~, d] = sift(sift_type, image);
                 h = descriptorToHistogram(clusters_number, C, d);
                 if contains(foldername, 'airplanes')
                     testing_airplanes = [testing_airplanes; h];
@@ -46,8 +45,8 @@ else
         end
     end
 
-    save('data/testing_data/testing_airplanes.mat', 'testing_airplanes');
-    save('data/testing_data/testing_cars.mat', 'testing_cars');
-    save('data/testing_data/testing_faces.mat', 'testing_faces');
-    save('data/testing_data/testing_motorbikes.mat', 'testing_motorbikes');
+    save(testing_airplanes_path, 'testing_airplanes');
+    save(testing_cars_path, 'testing_cars');
+    save(testing_faces_path, 'testing_faces');
+    save(testing_motorbikes_path, 'testing_motorbikes');
 end

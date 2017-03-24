@@ -139,8 +139,8 @@ end
 % subtract mean
 dataMean = mean(data(:, :, :, sets == 1), 4);
 data = bsxfun(@minus, data, dataMean);
-
-imdb.images.data = data ;
+data = single(data);
+imdb.images.data = data;
 imdb.images.labels = single(labels) ;
 imdb.images.set = sets;
 imdb.meta.sets = {'train', 'val'} ;

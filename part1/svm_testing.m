@@ -3,7 +3,7 @@ test_images = double([testing_airplanes; testing_cars; testing_faces; testing_mo
 test_data_matrix = sparse(test_images);
 
 % airplanes test
-load('data/models/airplanes_model.mat', 'airplanes_model');
+load(strcat(data_folder, 'models/airplanes_model.mat'), 'airplanes_model');
 test_labels = [repmat(1,[size(testing_airplanes, 1), 1]); 
     repmat(-1,[size(testing_cars, 1) 1]);
     repmat(-1,[size(testing_faces, 1) 1]);
@@ -13,7 +13,7 @@ test_labels = [repmat(1,[size(testing_airplanes, 1), 1]);
 airplanes_ap = average_precision(probabilities, test_labels, size(testing_airplanes, 1));
 
 % cars test
-load('data/models/cars_model.mat', 'cars_model');
+load(strcat(data_folder, 'models/cars_model.mat'), 'cars_model');
 test_labels = [repmat(-1,[size(testing_airplanes, 1), 1]); 
     repmat(1,[size(testing_cars, 1) 1]);
     repmat(-1,[size(testing_faces, 1) 1]);
@@ -23,7 +23,7 @@ test_labels = [repmat(-1,[size(testing_airplanes, 1), 1]);
 cars_ap = average_precision(probabilities, test_labels, size(testing_cars, 1));
 
 % faces test
-save('data/models/faces_model.mat', 'faces_model');
+save(strcat(data_folder, 'models/faces_model.mat'), 'faces_model');
 test_labels = [repmat(-1,[size(testing_airplanes, 1), 1]); 
     repmat(-1,[size(testing_cars, 1) 1]);
     repmat(1,[size(testing_faces, 1) 1]);
@@ -33,7 +33,7 @@ test_labels = [repmat(-1,[size(testing_airplanes, 1), 1]);
 faces_ap = average_precision(probabilities, test_labels, size(testing_faces, 1));
 
 % motorbikes test
-save('data/models/motorbikes_model.mat', 'motorbikes_model');
+save(strcat(data_folder, 'models/motorbikes_model.mat'), 'motorbikes_model');
 test_labels = [repmat(-1,[size(testing_airplanes, 1), 1]); 
     repmat(-1,[size(testing_cars, 1) 1]);
     repmat(-1,[size(testing_faces, 1) 1]);
