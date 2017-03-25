@@ -1,9 +1,12 @@
-clear;
-sift_type = 'grayscale';
+% clear;
+sift_type = 'color';
 clusters_number = 400;
-runAlgorithm(sift_type, clusters_number);
+kernel_type = 'linear';
+kernel_param = get_kernel_param(kernel_type);
+    
+runAlgorithm(sift_type, clusters_number, kernel_param);
 
-function [] = runAlgorithm(sift_type, clusters_number)
+function [] = runAlgorithm(sift_type, clusters_number, kernel_param)
     data_folder = char(strcat('data/', string(sift_type), '/', string(clusters_number), '/'));
 
     mkdir(strcat(data_folder, 'models'));
