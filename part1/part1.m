@@ -1,4 +1,5 @@
-sift_type = 'color';
+% sift_type = 'color';
+sift_type = 'grayscale';
 clusters_number = 400;
 data_folder = char(strcat('data/', string(sift_type), '/', string(clusters_number), '/'));
 
