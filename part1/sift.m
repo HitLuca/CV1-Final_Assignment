@@ -25,14 +25,8 @@ function [f, d] = grayscaleDenseSift(image)
     end
     step = 1;
     s = 8;
-    magnif = 3 ;
 
-    % pre-smoothing image (dsift doesn't do that)
-    smoothed = vl_imsmooth(image, sqrt((s/magnif)^2 - .25));
-
-    [f, d] = vl_dsift(smoothed, 'size', s, 'step', step);
-    f(3,:) = s/magnif ;
-    f(4,:) = 0 ;
+    [f, d] = vl_dsift(image, 'size', s, 'step', step);
 end
 
 function [f, d] = colorSift(image)

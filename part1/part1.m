@@ -1,23 +1,28 @@
-sift_type = 'color';
-clusters_number = 400;
-data_folder = char(strcat('data/', string(sift_type), '/', string(clusters_number), '/'));
+clear;
+sift_type = 'grayscale';
+clusters_number = 4000;
+runAlgorithm(sift_type, clusters_number);
 
-mkdir(strcat(data_folder, 'models'));
-mkdir(strcat(data_folder, 'preprocessing'));
-mkdir(strcat(data_folder, 'testing_data'));
-mkdir(strcat(data_folder, 'training_data'));
+function [] = runAlgorithm(sift_type, clusters_number)
+    data_folder = char(strcat('data/', string(sift_type), '/', string(clusters_number), '/'));
 
-disp('PREPROCESSING');
-run('preprocessing.m');
+    mkdir(strcat(data_folder, 'models'));
+    mkdir(strcat(data_folder, 'preprocessing'));
+    mkdir(strcat(data_folder, 'testing_data'));
+    mkdir(strcat(data_folder, 'training_data'));
 
-disp('TRAINING DATASET CREATION');
-run('svm_train_dataset.m');
+    disp('PREPROCESSING');
+    run('preprocessing.m');
 
-disp('TRAINING');
-run('svm_training.m');
+    disp('TRAINING DATASET CREATION');
+    run('svm_train_dataset.m');
 
-disp('TEST DATASET CREATION');
-run('svm_test_dataset.m');
+    disp('TRAINING');
+    run('svm_training.m');
 
-disp('TESTING');
-run('svm_testing.m');
+    disp('TEST DATASET CREATION');
+    run('svm_test_dataset.m');
+
+    disp('TESTING');
+    run('svm_testing.m');
+end

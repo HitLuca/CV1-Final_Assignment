@@ -17,6 +17,7 @@ if exist(kmeans_clusters_path, 'file')
     load(kmeans_clusters_path, 'C');
 else
     [idx,C] = kmeans(descriptors', clusters_number, 'Display', 'iter', 'MaxIter', kmeans_iterations);
+    C = double(C);
     save(kmeans_clusters_path, 'C');
 end
 
@@ -44,5 +45,5 @@ function [descriptors] = loadDescriptors(numImages, sift_type)
             end
         end
     end
-    descriptors = double(descriptors);
+    descriptors = single(descriptors);
 end
