@@ -9,7 +9,7 @@ test_labels = [ones(size(testing_airplanes, 1), 1);
     zeros(size(testing_faces, 1), 1);
     zeros(size(testing_motorbikes, 1), 1)];
 
-[~, ~, probabilities] = predict(test_labels, test_data_matrix, airplanes_model);
+[~, ~, probabilities] = svmpredict(test_labels, test_data_matrix, airplanes_model);
 airplanes_ap = average_precision(probabilities, test_labels, size(testing_airplanes, 1));
 
 % cars test
@@ -19,7 +19,7 @@ test_labels = [zeros(size(testing_airplanes, 1), 1);
     zeros(size(testing_faces, 1), 1);
     zeros(size(testing_motorbikes, 1), 1)];
 
-[~, ~, probabilities] = predict(test_labels, test_data_matrix, cars_model);
+[~, ~, probabilities] = svmpredict(test_labels, test_data_matrix, cars_model);
 cars_ap = average_precision(probabilities, test_labels, size(testing_cars, 1));
 
 % faces test
@@ -29,7 +29,7 @@ test_labels = [zeros(size(testing_airplanes, 1), 1);
     ones(size(testing_faces, 1), 1);
     zeros(size(testing_motorbikes, 1), 1)];
 
-[~, ~, probabilities] = predict(test_labels, test_data_matrix, faces_model);
+[~, ~, probabilities] = svmpredict(test_labels, test_data_matrix, faces_model);
 faces_ap = average_precision(probabilities, test_labels, size(testing_faces, 1));
 
 % motorbikes test
@@ -39,7 +39,7 @@ test_labels = [zeros(size(testing_airplanes, 1), 1);
     zeros(size(testing_faces, 1), 1);
     ones(size(testing_motorbikes, 1), 1)];
 
-[~, ~, probabilities] = predict(test_labels, test_data_matrix, motorbikes_model);
+[~, ~, probabilities] = svmpredict(test_labels, test_data_matrix, motorbikes_model);
 motorbikes_ap = average_precision(probabilities, test_labels, size(testing_motorbikes, 1));
 
 %% calculating MAP

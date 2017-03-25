@@ -1,10 +1,10 @@
 % sift_type = 'color';
 sift_type = 'grayscale';
 clusters_number = 400;
-
-svm_param = ['-t -v 3 -c ', num2str(c), ' -g ', num2str(g)];
-
+kernel_type = 'linear';
 data_folder = char(strcat('data/', string(sift_type), '/', string(clusters_number), '/'));
+
+kernel_param = get_kernel_param(kernel_type);
 
 mkdir(strcat(data_folder, 'models'));
 mkdir(strcat(data_folder, 'preprocessing'));
