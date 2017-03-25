@@ -1,6 +1,6 @@
 clear;
 sift_type = 'grayscale';
-clusters_number = 4000;
+clusters_number = 400;
 runAlgorithm(sift_type, clusters_number);
 
 function [] = runAlgorithm(sift_type, clusters_number)
