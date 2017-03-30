@@ -26,15 +26,17 @@ else
             disp(foldername)
 
             % loop over all the files in each folder
-            for j=1:numel(folder_contents)
+            for j=preprocessing_images+1:numel(folder_contents)
                 filename = folder_contents(j).name;
-
+                
                 image = imread(strcat(dataset_dir, foldername, '/', filename));
 
                 % generate the histogram for the specific image and put it in
                 % the right matrix
-                [~, d] = sift(sift_type, image);
+                [~, d] = sift(sift_type, image, -1);
+                
                 h = descriptorToHistogram(clusters_number, C, d);
+                
                 if contains(foldername, 'airplanes')
                     training_airplanes = [training_airplanes; h];
                 elseif contains(foldername, 'cars')

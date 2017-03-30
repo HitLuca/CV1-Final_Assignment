@@ -3,43 +3,43 @@ test_images = double([testing_airplanes; testing_cars; testing_faces; testing_mo
 test_data_matrix = sparse(test_images);
 
 % airplanes test
-load(strcat(data_folder, 'models/airplanes_model.mat'), 'airplanes_model');
+load(strcat(data_folder, 'models/', kernel_type, '/airplanes_model_', kernel_type, '.mat'), 'airplanes_model');
 test_labels = [ones(size(testing_airplanes, 1), 1); 
     zeros(size(testing_cars, 1), 1);
     zeros(size(testing_faces, 1), 1);
     zeros(size(testing_motorbikes, 1), 1)];
 
-[~, ~, probabilities] = svmpredict(test_labels, test_data_matrix, airplanes_model);
+[~, ~, probabilities] = svmpredict(test_labels, test_data_matrix, airplanes_model, '-q');
 airplanes_ap = average_precision(probabilities, test_labels, size(testing_airplanes, 1));
 
 % cars test
-load(strcat(data_folder, 'models/cars_model.mat'), 'cars_model');
+load(strcat(data_folder, 'models/', kernel_type, '/cars_model_', kernel_type, '.mat'), 'cars_model');
 test_labels = [zeros(size(testing_airplanes, 1), 1); 
     ones(size(testing_cars, 1), 1);
     zeros(size(testing_faces, 1), 1);
     zeros(size(testing_motorbikes, 1), 1)];
 
-[~, ~, probabilities] = svmpredict(test_labels, test_data_matrix, cars_model);
+[~, ~, probabilities] = svmpredict(test_labels, test_data_matrix, cars_model, '-q');
 cars_ap = average_precision(probabilities, test_labels, size(testing_cars, 1));
 
 % faces test
-save(strcat(data_folder, 'models/faces_model.mat'), 'faces_model');
+load(strcat(data_folder, 'models/', kernel_type, '/faces_model_', kernel_type, '.mat'), 'faces_model');
 test_labels = [zeros(size(testing_airplanes, 1), 1); 
     zeros(size(testing_cars, 1), 1);
     ones(size(testing_faces, 1), 1);
     zeros(size(testing_motorbikes, 1), 1)];
 
-[~, ~, probabilities] = svmpredict(test_labels, test_data_matrix, faces_model);
+[~, ~, probabilities] = svmpredict(test_labels, test_data_matrix, faces_model, '-q');
 faces_ap = average_precision(probabilities, test_labels, size(testing_faces, 1));
 
 % motorbikes test
-save(strcat(data_folder, 'models/motorbikes_model.mat'), 'motorbikes_model');
+load(strcat(data_folder, 'models/', kernel_type, '/motorbikes_model_', kernel_type, '.mat'), 'motorbikes_model');
 test_labels = [zeros(size(testing_airplanes, 1), 1); 
     zeros(size(testing_cars, 1), 1);
     zeros(size(testing_faces, 1), 1);
     ones(size(testing_motorbikes, 1), 1)];
 
-[~, ~, probabilities] = svmpredict(test_labels, test_data_matrix, motorbikes_model);
+[~, ~, probabilities] = svmpredict(test_labels, test_data_matrix, motorbikes_model, '-q');
 motorbikes_ap = average_precision(probabilities, test_labels, size(testing_motorbikes, 1));
 
 %% calculating MAP
@@ -48,9 +48,9 @@ mean_average_precision = (airplanes_ap + cars_ap + faces_ap + motorbikes_ap) / 4
 [airplanes_ap
 cars_ap
 faces_ap
-motorbikes_ap]
+motorbikes_ap];
 
-mean_average_precision
+mean_average_precision;
 
 %%
 function [assignments] = calculate_class_assignments(probabilities, labels)

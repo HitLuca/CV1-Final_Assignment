@@ -30,7 +30,7 @@ else
 
                 image = imread(strcat(dataset_dir, foldername, '/', filename));
 
-                [~, d] = sift(sift_type, image);
+                [~, d] = sift(sift_type, image, -1);
                 h = descriptorToHistogram(clusters_number, C, d);
                 if contains(foldername, 'airplanes')
                     testing_airplanes = [testing_airplanes; h];
