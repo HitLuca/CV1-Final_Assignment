@@ -52,7 +52,8 @@ motorbikes_ap];
 
 mean_average_precision;
 
-%%
+%% Support functions
+
 function [assignments] = calculate_class_assignments(probabilities, labels)
     [~, indexes] = sort(probabilities, 'descend');
     assignments = labels(indexes);

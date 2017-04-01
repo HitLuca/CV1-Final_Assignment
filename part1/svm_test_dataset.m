@@ -1,14 +1,25 @@
+%% Creation of the testing dataset
+% the testing dataset is created by loading every test image, creating a
+% histogram representation of the extracted sift descriptors and storing
+% it along the histograms for every other image of the same class
+
+ %#ok<*AGROW>
+ 
+% various folder paths used
 testing_airplanes_path = strcat(data_folder, 'testing_data/testing_airplanes.mat');
 testing_cars_path = strcat(data_folder, 'testing_data/testing_cars.mat');
 testing_faces_path = strcat(data_folder, 'testing_data/testing_faces.mat');
 testing_motorbikes_path = strcat(data_folder, 'testing_data/testing_motorbikes.mat');
 
+% check if the dataset has already been computed
 if exist(testing_airplanes_path, 'file')
+    % load the dataset
     load(testing_airplanes_path, 'testing_airplanes');
     load(testing_cars_path, 'testing_cars');
     load(testing_faces_path, 'testing_faces');
     load(testing_motorbikes_path, 'testing_motorbikes');
 else
+    % create the dataset
     dataset_dir = '../Caltech4/ImageData/';
     contents = dir(dataset_dir); % all the image folders
 
@@ -20,6 +31,8 @@ else
     % loop over all the folders
     for i = 1:numel(contents)
         foldername = contents(i).name;
+        
+        % enter only in the test folders
         if contains(foldername, 'test')
             folder_contents = dir(strcat(dataset_dir, foldername, '/*.jpg'));
             disp(foldername)
@@ -27,11 +40,17 @@ else
              % loop over all the files in each folder
             for j=1:numel(folder_contents)
                 filename = folder_contents(j).name;
-
+                
+                % read the image
                 image = imread(strcat(dataset_dir, foldername, '/', filename));
 
+                % calculate the sift descriptors
                 [~, d] = sift(sift_type, image, -1);
-                h = descriptorToHistogram(clusters_number, C, d);
+                
+                % convert the descriptors to an histogram
+                h = descriptorToProbabilisticHistogram(clusters_number, C, d);
+                
+                % concatenate the histogram with the correct matrix
                 if contains(foldername, 'airplanes')
                     testing_airplanes = [testing_airplanes; h];
                 elseif contains(foldername, 'cars')
@@ -45,6 +64,7 @@ else
         end
     end
 
+    % save the dataset
     save(testing_airplanes_path, 'testing_airplanes');
     save(testing_cars_path, 'testing_cars');
     save(testing_faces_path, 'testing_faces');
