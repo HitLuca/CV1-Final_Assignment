@@ -1,14 +1,14 @@
 function [net, info, expdir] = finetune_cnn(varargin)
 
 %% Define options
-run('/home/luca/Documents/MATLAB/matconvnet-1.0-beta23/matlab/vl_setupnn.m');
+run('/home/henglin/matlab_R2016b_glnxa64/matconvnet-1.0-beta23/matlab/vl_setupnn.m');
 
 opts.modelType = 'lenet' ;
-[opts, varargin] = vl_argparse(opts, varargin) ;
+[opts, varargin] = vl_argparse(opts, varargin);     % update parameter-value pairs
 
 opts.expDir = fullfile('data', ...
-  sprintf('cnn_assignment-%s', opts.modelType)) ;
-[opts, varargin] = vl_argparse(opts, varargin) ;
+  sprintf('cnn_assignment-%s', opts.modelType));
+[opts, varargin] = vl_argparse(opts, varargin);
 
 opts.dataDir = './data/' ;
 opts.imdbPath = fullfile(opts.expDir, 'imdb-caltech.mat');
@@ -36,6 +36,7 @@ else
   save(opts.imdbPath, '-struct', 'imdb') ;
 end
 
+
 %%
 net.meta.classes.name = imdb.meta.classes(:)' ;
 
@@ -52,7 +53,9 @@ trainfn = @cnn_train ;
 
 expdir = opts.expDir;
 end
-% -------------------------------------------------------------------------
+
+%% GetBatch
+
 function fn = getBatch(opts)
 % -------------------------------------------------------------------------
 switch lower(opts.networkType)
@@ -65,6 +68,8 @@ end
 
 end
 
+%% GetSimpleNNBatch
+
 function [images, labels] = getSimpleNNBatch(imdb, batch)
 % -------------------------------------------------------------------------
 images = imdb.images.data(:,:,:,batch) ;
@@ -73,9 +78,10 @@ if rand > 0.5, images=fliplr(images) ; end
 
 end
 
-% -------------------------------------------------------------------------
+%% GetCaltechIMDB
+
 function imdb = getCaltechIMDB()
-% -------------------------------------------------------------------------
+
 % Prepare the imdb structure, returns image data with mean image subtracted
 classes = {'airplanes', 'cars', 'faces', 'motorbikes'};
 splits = {'train', 'test'};
@@ -118,7 +124,8 @@ for i = 1:numel(contents)
         
         % checking for grayscale images
         if size(image, 3) == 1
-            image = cat(3, image, image, image);
+            continue
+%             image = cat(3, image, image, image);
         end
         image = imresize(image, [32, 32]);
         
@@ -135,6 +142,11 @@ for i = 1:numel(contents)
         k = k + 1;
     end
 end
+
+data = single(data);
+sets = single(sets);
+labels = single(labels);
+
 %%
 % subtract mean
 dataMean = mean(data(:, :, :, sets == 1), 4);
