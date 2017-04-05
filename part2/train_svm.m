@@ -36,7 +36,7 @@ function plotFeatureSpace(svm)
     pre_trained = tsne(svm.pre_trained.trainset.features, svm.pre_trained.trainset.labels, 2, 3, 30);
     fine_tuned = tsne(svm.fine_tuned.trainset.features, svm.fine_tuned.trainset.labels, 2, 3, 30);
 
-    % plot the feature space
+    % plot the feature space for trainint set
     subplot(1, 2, 1);
     gscatter(pre_trained(:,1), pre_trained(:,2), svm.pre_trained.trainset.labels);
     subplot(1, 2, 2);
@@ -50,7 +50,7 @@ function plotFeatureSpace(svm)
     pre_trained = tsne(svm.pre_trained.testset.features, svm.pre_trained.testset.labels, 2, 3, 30);
     fine_tuned = tsne(svm.fine_tuned.testset.features, svm.fine_tuned.testset.labels, 2, 3, 30);
 
-    % plot the feature space
+    % plot the feature space for testing set
     subplot(1, 2, 1);
     gscatter(pre_trained(:,1), pre_trained(:,2), svm.pre_trained.testset.labels);
     subplot(1, 2, 2);
