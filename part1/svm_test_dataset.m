@@ -3,7 +3,7 @@
 % histogram representation of the extracted descriptors and storing
 % it along the histograms for every other image of the same class
 
- %#ok<*AGROW>
+%#ok<*AGROW>
  
 % various folder paths used
 testing_airplanes_path = [data_folder, 'testing_data/testing_airplanes.mat'];

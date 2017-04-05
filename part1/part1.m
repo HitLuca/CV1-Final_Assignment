@@ -8,9 +8,11 @@ for d = {'grayscaleLiop', 'RGBLiop', 'rgbLiop', 'opponentLiop', 'grayscaleSift',
     descriptor_type = d{1};
 
     % cycle through every vocabulary size
-    for c = {400, 1600} % {400, 800, 1600, 2000}
+    for c = {400, 800, 1600, 2000}
         clusters_number = c{1};
 
+        % if using LIOP, the vocabulary has size of 200 and is calculated
+        % only one time
         if size(strfind(descriptor_type, 'Liop'), 2) > 0
             if clusters_number ~= 400
                 break
@@ -25,38 +27,41 @@ for d = {'grayscaleLiop', 'RGBLiop', 'rgbLiop', 'opponentLiop', 'grayscaleSift',
         preprocessing_images = 50; % number of images to load per class for preprocessing
         preprocessing_descriptors = -1; % number of descriptor to extract per image, -1 for all
         
+        % create the data folders
         data_folder = createFolders(descriptor_type, clusters_number);
 
         % descriptors extraction and creation of the visual vocabulary
-%         disp('--Preprocessing');
+        disp('--Preprocessing');
         preprocessing;
 
         % creation of the training dataset, without using the first
         % preprocessing_images images
-%         disp('--Training dataset creation');
-%         svm_train_dataset;
+        disp('--Training dataset creation');
+        svm_train_dataset;
 
         %creation of the test dataset, using all the test images
-%         disp('--Test dataset creation');
+        disp('--Test dataset creation');
         svm_test_dataset;
 
         % training and testing of the classifiers, cycling over every
         % kernel type
-%         disp('--SVM training and testing');
-        for i = {'rbf'} %{'linear', 'polynomial', 'rbf'}
+        disp('--SVM training and testing');
+        for i = {'linear', 'polynomial', 'rbf'}
             kernel_type = i{1};
             
-%             svm_training;
+            svm_training;
             svm_testing;
             
             %displaying the results
-%             disp([kernel_type, ' MAP: ', num2str(mean_average_precision)]);
+            disp([kernel_type, ' MAP: ', num2str(mean_average_precision)]);
             disp([kernel_type, ' accuracy: ', num2str(mean_accuracy)]);
         end
         
-%         knn_training_testing;
+        % knn classifier training and testing
+        knn_training_testing;
         
-%         disp(['knn accuracy: ', num2str(knn_accuracy)]);
+        %displaying the results
+        disp(['knn accuracy: ', num2str(knn_accuracy)]);
         fprintf('\n');
     end
     fprintf('\n');
@@ -76,9 +81,13 @@ end
 % data_folder the path of the root folder for the current run
 
 function [data_folder] = createFolders(descriptor_type, clusters_number)
+    % disable the warnings for existing folders
     warning('off', 'all');
+    
+    % determine the data folder
     data_folder = char(['data/', descriptor_type, '/', num2str(clusters_number), '/']);
 
+    % create the folders
     mkdir([data_folder, 'models']);
     mkdir([data_folder, 'preprocessing']);
     mkdir([data_folder, 'testing_data']);
@@ -87,6 +96,7 @@ function [data_folder] = createFolders(descriptor_type, clusters_number)
     mkdir([data_folder, 'models/linear']);
     mkdir([data_folder, 'models/polynomial']);
     mkdir([data_folder, 'models/rbf']);
-    mkdir([data_folder, 'models/sigmoid']);
+    
+    % re-enable the warnings
     warning('on', 'all');
 end

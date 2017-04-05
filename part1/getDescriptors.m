@@ -2,7 +2,7 @@
 % wrapper used to choose the correct sift/liop descriptors to compute
 % 
 % --inputs
-% type: sift/liop type
+% descriptor_type: sift/liop descriptor type
 % image: input image
 % descriptors_per_image: number of descriptors to output per image. If -1
 % or the sift type is dense, no changes are made
@@ -51,15 +51,15 @@ function [ f, d ] = getDescriptors(descriptor_type, image, descriptors_per_image
     end
     
     % trim the outputs in order to get descriptors_per_image number of
-    % descriptors
+    % descriptors (only for dense SIFT)
     if descriptors_per_image ~= -1 && strfind(type, 'Dense') == 0
         [f, d] = trimElements(f, d, descriptors_per_image);
     end
 end
 
-
 %% Support functions
 
+% Descriptors trimming to specified number
 % reduce the number of total descriptors in order to save memory if needed
 %
 % --inputs
@@ -69,7 +69,7 @@ end
 %
 % --outputs
 % f: trimmed sift frames
-% d: trimmed sift descriptors
+% d: trimmed sift/liop descriptors
 
 function [f, d] = trimElements(f, d, descriptors_per_image)
     if size(d, 2) > descriptors_per_image
@@ -90,6 +90,7 @@ function [f, d] = trimElements(f, d, descriptors_per_image)
 end
 
 
+% RGB to rgb conversion
 % convert the input image to normalized rgb color space
 %
 % --inputs:
@@ -101,24 +102,26 @@ end
 % b: normalized b
 
 function [r, g, b] = convertTorgb(image)
-    %extract each channel
+    % extract each channel
     R  = image(:,:,1);
     G  = image(:,:,2);
     B  = image(:,:,3);
     
     den = (R+G+B);
     
-    %convert to rgb space
+    % convert to rgb space
     r = R ./den;
     g = G ./den;
     b = B ./den;
     
+    % check the results in order to remove NaN values
     r(isnan(r)) = 0;
     g(isnan(g)) = 0;
     b(isnan(b)) = 0;
 end
 
 
+% RGB to opponent conversion
 % convert the input image to opponent color space
 %
 % --inputs:
@@ -130,12 +133,12 @@ end
 % o3: third opponent channel
 
 function [o1, o2, o3] = convertToOpponent(image)
-    %extract each channel
+    % extract each channel
     R  = image(:,:,1);
     G  = image(:,:,2);
     B  = image(:,:,3);
 
-    %convert to opponent space
+    % convert to opponent space
     o1 = (R-G)./sqrt(2);
     o2 = (R+G-2*B)./sqrt(6);
     o3 = (R+G+B)./sqrt(3);
@@ -313,15 +316,23 @@ function [f, d] = opponentDenseSift(image, grayscale_image)
 end
 
 function [f, d] = grayscaleLiop(grayscale_image)
+    % resize the image to 299x299 (odd size length and square sizes)
     grayscale_image = imresize(grayscale_image, [299, 299]);
+    
+    % no frames are extracted
     f = NaN;
+    
     d = vl_liop(grayscale_image);
 end
 
 function [f, d] = RGBLiop(image)
+    % resize the image to 299x299 (odd size length and square sizes)
     image = imresize(image, [299, 299]);
+    
+    % no frames are extracted
     f = NaN;
     
+    % apply liop to every channel
     if size(image, 3) > 1
         d1 = vl_liop(image(:,:,1));
         d2 = vl_liop(image(:,:,2));
@@ -336,9 +347,13 @@ function [f, d] = RGBLiop(image)
 end
 
 function [f, d] = rgbLiop(image)
+    % resize the image to 299x299 (odd size length and square sizes) 
     image = imresize(image, [299, 299]);
+    
+    % no frames are extracted
     f = NaN;
     
+    % apply liop to every rgb channel
     if size(image, 3) > 1
         [r, g, b] = convertTorgb(image);
         
@@ -355,9 +370,13 @@ function [f, d] = rgbLiop(image)
 end
 
 function [f, d] = opponentLiop(image)
+    % resize the image to 299x299 (odd size length and square sizes)
     image = imresize(image, [299, 299]);
+    
+    % no frames are extracted
     f = NaN;
     
+    % apply liop to every channel
     if size(image, 3) > 1
         [o1, o2, o3] = convertToOpponent(image);
         

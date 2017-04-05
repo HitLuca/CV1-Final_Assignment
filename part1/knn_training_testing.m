@@ -1,5 +1,14 @@
+%% K-nearest neighbor classifier training and testing
+% this routine creates and trains the knn classifier with the claculated
+% training and testing data
+
+% filepath for the knn classifier
 knn_classifier_filepath = [data_folder, 'models/', 'knn_classifier.mat'];
 
+% number of neighbors
+N = 5;
+
+% check if the model exists
 if exist(knn_classifier_filepath, 'file')
     % load the models
     load(knn_classifier_filepath, 'knn_classifier');
@@ -15,6 +24,8 @@ else
 
     % fit the knn model
     knn_classifier = fitcknn(train_images,train_labels, 'NumNeighbors', N);
+    
+    % save the classifier
     save(knn_classifier_filepath, 'knn_classifier');
 end
 
@@ -32,4 +43,3 @@ test_labels = [repmat(1, size(testing_airplanes, 1), 1);
 
 % calculate model accuracy
 knn_accuracy = sum(test_labels == output_labels) / numel(test_labels);
-

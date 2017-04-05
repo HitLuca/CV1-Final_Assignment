@@ -1,3 +1,4 @@
+% Descriptors to histogram conversion
 % this function converts the descriptors of an image to a normalized histogram of
 % clusters_number size
 % 
@@ -7,16 +8,17 @@
 % descriptors: descriptors of the current image
 %
 % --outputs
-% hist_bins: calculated histogram
+% histogram: normalized histogram
 
-function [hist_bins] = descriptorToHistogram(clusters_number, clusters, descriptors)
+function [histogram] = descriptorToHistogram(clusters_number, clusters, descriptors)
     descriptors = double(descriptors');
     
-    d_number = size(descriptors, 1); % number of descriptors
+    % number of descriptors
+    d_number = size(descriptors, 1);
     
     % calculating the index of the closest cluster for every descriptor
     [indexes, ~] = knnsearch(clusters, descriptors);
     
     % histogram creation and normalization using the number of image descriptors
-    hist_bins = hist(indexes, clusters_number) ./ d_number;
+    histogram = hist(indexes, clusters_number) ./ d_number;
 end

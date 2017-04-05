@@ -37,6 +37,7 @@ end
 
 %% Support functions
 
+% descriptors loading
 % calculation of the descriptors of the first preprocessing_images
 %
 % --inputs
