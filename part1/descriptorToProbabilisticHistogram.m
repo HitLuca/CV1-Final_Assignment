@@ -1,18 +1,26 @@
 function [hist_bins] = descriptorToProbabilisticHistogram(clusters_number, clusters, descriptors)
+    % number of nearest clusters to consider
     k = 5;
 
     descriptors = double(descriptors');
     
-    d_number = size(descriptors, 1); % number of descriptors
-    hist_bins = zeros(1, clusters_number); % empty histogram
+    % empty histogram
+    hist_bins = zeros(1, clusters_number);
     
     % calculating the index of the closest cluster for every descriptor
     [indexes, distances] = knnsearch(clusters, descriptors, 'K', k);
+
+    % calculating the inverse of the distances
+    distances = 1 ./ distances;
     
+    % normalizing them
+    distances = distances ./ sum(distances, 2);
+        
+    % summing all the contributions
     for i=1:size(indexes, 1)
-        hist_bins(indexes(i, :)) = hist_bins(indexes(i,:)) + distances(i,:)./sum(distances(i,:));
+        hist_bins(indexes(i, :)) = hist_bins(indexes(i,:)) + distances(i, :);
     end
     
-    % histogram normalization using the number of image descriptors
-    hist_bins = hist_bins ./ d_number;
+    % histogram normalization
+    hist_bins = hist_bins ./ sum(hist_bins);
 end

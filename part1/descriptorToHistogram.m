@@ -13,7 +13,6 @@ function [hist_bins] = descriptorToHistogram(clusters_number, clusters, descript
     descriptors = double(descriptors');
     
     d_number = size(descriptors, 1); % number of descriptors
-    hist_bins = zeros(1, clusters_number); % empty histogram
     
     % calculating the index of the closest cluster for every descriptor
     [indexes, ~] = knnsearch(clusters, descriptors);

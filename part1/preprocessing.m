@@ -4,8 +4,8 @@
 % calculation using vl_kmeans.
 
 % various folder paths used
-kmeans_clusters_path = char(strcat(data_folder, 'preprocessing/kmeans_clusters', '_', string(clusters_number), '_', string(preprocessing_images), '.mat'));
-kmeans_descriptors_path = char(strcat(data_folder, 'preprocessing/kmeans_descriptors', '_', string(preprocessing_images), '.mat'));
+kmeans_clusters_path = [data_folder, 'preprocessing/kmeans_clusters', '_', num2str(clusters_number), '_', num2str(preprocessing_images), '.mat'];
+kmeans_descriptors_path = [data_folder, 'preprocessing/kmeans_descriptors', '_', num2str(preprocessing_images), '.mat'];
 
 % check if the descriptors have already been calculated
 if exist(kmeans_descriptors_path, 'file')
@@ -14,7 +14,7 @@ if exist(kmeans_descriptors_path, 'file')
 else
     % create a matrix with all the descriptors of the different images
     disp('---descriptors calculation');
-    descriptors = loadDescriptors(preprocessing_images, sift_type, preprocessing_descriptors);
+    descriptors = loadDescriptors(preprocessing_images, descriptor_type, preprocessing_descriptors);
     % save the descriptors
     save(kmeans_descriptors_path, 'descriptors');
 end
@@ -41,14 +41,14 @@ end
 %
 % --inputs
 % preprocessing_images: number of images to load per class
-% sift_type: type of sift used
+% descriptor_type: type of descriptor used
 % preprocessing_descriptors: number of descriptors to return per image, if
 % -1 all descriptors are returned
 %
 % --outputs
 % descriptors: matrix containing the descriptors of all the loaded images
 
-function [descriptors] = loadDescriptors(preprocessing_images, sift_type, preprocessing_descriptors)
+function [descriptors] = loadDescriptors(preprocessing_images, descriptor_type, preprocessing_descriptors)
     descriptors = [];
     dataset_dir = '../Caltech4/ImageData/';
 
@@ -69,9 +69,9 @@ function [descriptors] = loadDescriptors(preprocessing_images, sift_type, prepro
                 % read the image
                 image = imread(strcat(dataset_dir, foldername, '/', filename));
 
-                % calculate the sift descriptors
-                [~, d] = sift(sift_type, image, preprocessing_descriptors);
-                
+                % calculate the descriptors
+                [~, d] = getDescriptors(descriptor_type, image, preprocessing_descriptors);
+
                 % add the descriptors to the final matrix
                 descriptors = [descriptors, d]; %#ok<AGROW>
             end
@@ -79,6 +79,6 @@ function [descriptors] = loadDescriptors(preprocessing_images, sift_type, prepro
     end
     
     % convert the matrix to single in order to save space in memory
-    % (serious problem when using the matlab kmeans function)
+    % (serious problem when using the matlab built in kmeans function)
     descriptors = single(descriptors);
 end

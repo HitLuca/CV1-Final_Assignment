@@ -1,16 +1,16 @@
 %% Creation of the training dataset
 % the training dataset is created by loading every train image (excluding 
 % the ones already used for the visual vocabulary creation), creating a
-% histogram representation of the extracted sift descriptors and storing
+% histogram representation of the extracted descriptors and storing
 % it along the histograms for every other image of the same class
 
  %#ok<*AGROW>
  
 % various folder paths used
-training_airplanes_path = strcat(data_folder, 'training_data/training_airplanes.mat');
-training_cars_path = strcat(data_folder, 'training_data/training_cars.mat');
-training_faces_path = strcat(data_folder, 'training_data/training_faces.mat');
-training_motorbikes_path = strcat(data_folder, 'training_data/training_motorbikes.mat');
+training_airplanes_path = [data_folder, 'training_data/training_airplanes.mat'];
+training_cars_path = [data_folder, 'training_data/training_cars.mat'];
+training_faces_path = [data_folder, 'training_data/training_faces.mat'];
+training_motorbikes_path = [data_folder, 'training_data/training_motorbikes.mat'];
 
 % check if the dataset has already been computed
 if exist(training_airplanes_path, 'file')
@@ -46,8 +46,8 @@ else
                 % read the image
                 image = imread(strcat(dataset_dir, foldername, '/', filename));
 
-                % calculate the sift descriptors
-                [~, d] = sift(sift_type, image, -1);
+                % calculate the descriptors
+                [~, d] = getDescriptors(descriptor_type, image, -1);
                 
                 % convert the descriptors to an histogram
                 h = descriptorToProbabilisticHistogram(clusters_number, C, d);

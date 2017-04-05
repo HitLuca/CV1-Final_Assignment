@@ -1,15 +1,15 @@
 %% Creation of the testing dataset
 % the testing dataset is created by loading every test image, creating a
-% histogram representation of the extracted sift descriptors and storing
+% histogram representation of the extracted descriptors and storing
 % it along the histograms for every other image of the same class
 
  %#ok<*AGROW>
  
 % various folder paths used
-testing_airplanes_path = strcat(data_folder, 'testing_data/testing_airplanes.mat');
-testing_cars_path = strcat(data_folder, 'testing_data/testing_cars.mat');
-testing_faces_path = strcat(data_folder, 'testing_data/testing_faces.mat');
-testing_motorbikes_path = strcat(data_folder, 'testing_data/testing_motorbikes.mat');
+testing_airplanes_path = [data_folder, 'testing_data/testing_airplanes.mat'];
+testing_cars_path = [data_folder, 'testing_data/testing_cars.mat'];
+testing_faces_path = [data_folder, 'testing_data/testing_faces.mat'];
+testing_motorbikes_path = [data_folder, 'testing_data/testing_motorbikes.mat'];
 
 % check if the dataset has already been computed
 if exist(testing_airplanes_path, 'file')
@@ -44,8 +44,8 @@ else
                 % read the image
                 image = imread(strcat(dataset_dir, foldername, '/', filename));
 
-                % calculate the sift descriptors
-                [~, d] = sift(sift_type, image, -1);
+                % calculate the descriptors
+                [~, d] = getDescriptors(descriptor_type, image, -1);
                 
                 % convert the descriptors to an histogram
                 h = descriptorToProbabilisticHistogram(clusters_number, C, d);
