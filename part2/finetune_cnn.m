@@ -1,14 +1,14 @@
 function [net, info, expdir] = finetune_cnn(varargin)
 
 %% Define options
-run('/home/luca/Documents/MATLAB/matconvnet-1.0-beta23/matlab/vl_setupnn.m');
+run('/home/henglin/matlab_R2016b_glnxa64/matconvnet-1.0-beta23/matlab/vl_setupnn.m');
 
 opts.modelType = 'lenet' ;
-[opts, varargin] = vl_argparse(opts, varargin) ;
+[opts, varargin] = vl_argparse(opts, varargin);     % update parameter-value pairs
 
 opts.expDir = fullfile('data', ...
-  sprintf('cnn_assignment-%s', opts.modelType)) ;
-[opts, varargin] = vl_argparse(opts, varargin) ;
+  sprintf('cnn_assignment-%s', opts.modelType));
+[opts, varargin] = vl_argparse(opts, varargin);
 
 opts.dataDir = './data/' ;
 opts.imdbPath = fullfile(opts.expDir, 'imdb-caltech.mat');
@@ -36,6 +36,7 @@ else
   save(opts.imdbPath, '-struct', 'imdb') ;
 end
 
+
 %%
 net.meta.classes.name = imdb.meta.classes(:)' ;
 
@@ -52,7 +53,9 @@ trainfn = @cnn_train ;
 
 expdir = opts.expDir;
 end
-% -------------------------------------------------------------------------
+
+%% GetBatch
+
 function fn = getBatch(opts)
 % -------------------------------------------------------------------------
 switch lower(opts.networkType)
@@ -65,27 +68,46 @@ end
 
 end
 
+%% GetSimpleNNBatch
+
 function [images, labels] = getSimpleNNBatch(imdb, batch)
 % -------------------------------------------------------------------------
 images = imdb.images.data(:,:,:,batch) ;
 labels = imdb.images.labels(1,batch) ;
-if rand > 0.5, images=fliplr(images) ; end
+
+% call the data augmentation function
+images = data_augmentation(images);
 
 end
 
-% -------------------------------------------------------------------------
+%% Data Augmentation Function
+
+function [images] = data_augmentation(images)
+    if rand > 0.5
+%         angle = randi(10);             % random degree of rotation
+%         images = imrotate(images, angle, 'nearest', 'crop');   % rotate the images
+%         images = fliplr(images);                  % flip the image
+        images = imnoise(images, 'gaussian', 0, 0.1);      % add gaussian noise to images
+    end
+end
+
+
+%% GetCaltechIMDB
+
 function imdb = getCaltechIMDB()
-% -------------------------------------------------------------------------
+
 % Prepare the imdb structure, returns image data with mean image subtracted
 classes = {'airplanes', 'cars', 'faces', 'motorbikes'};
 splits = {'train', 'test'};
 
 %% TODO: Implement your loop here, to create the data structure described in the assignment
+% Initialize the placeholders for the data
 data = zeros(32, 32, 3, 2079);
 sets = [];
 labels = [];
 k=1;
 
+% relevant file paths
 dataset_dir = './../Caltech4/ImageData/';
 train_filename = './../Caltech4/ImageSets/train.txt';
 test_filename = './../Caltech4/ImageSets/test.txt';
@@ -101,6 +123,7 @@ for i = 1:numel(contents)
     foldername = contents(i).name;
     folder_contents = dir(strcat(dataset_dir, foldername, '/*.jpg'));
     
+    % Assign labels based on folder name
     if strmatch('airplanes', foldername)
         label = 1;
     elseif strmatch('cars', foldername)
@@ -116,10 +139,12 @@ for i = 1:numel(contents)
         filename = folder_contents(j).name;
         image = imread(strcat(dataset_dir, foldername, '/', filename));
         
-        % checking for grayscale images
+        % checking for grayscale images, ignore if identified
         if size(image, 3) == 1
-            image = cat(3, image, image, image);
+            continue
         end
+        
+        % resize the images to satisfy the network input size
         image = imresize(image, [32, 32]);
         
         % match the foldername+filename with the train list
@@ -135,6 +160,9 @@ for i = 1:numel(contents)
         k = k + 1;
     end
 end
+
+sets = single(sets);
+
 %%
 % subtract mean
 dataMean = mean(data(:, :, :, sets == 1), 4);

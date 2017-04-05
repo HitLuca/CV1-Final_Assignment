@@ -8,6 +8,7 @@ nets.fine_tuned.layers{end}.type = 'softmax';
 [svm.pre_trained.trainset, svm.pre_trained.testset] = get_svm_data(data, nets.pre_trained);
 [svm.fine_tuned.trainset,  svm.fine_tuned.testset] = get_svm_data(data, nets.fine_tuned);
 
+
 %% measure the accuracy of different settings
 [nn.accuracy] = get_nn_accuracy(nets.fine_tuned, data);
 [svm.pre_trained.predictions, svm.pre_trained.accuracy] = get_predictions(svm.pre_trained);
@@ -17,29 +18,66 @@ fprintf('\n\n\n\n\n\n\n\n');
 
 fprintf('CNN: fine_tuned_accuracy: %0.2f, SVM: pre_trained_accuracy: %0.2f, fine_tuned_accuracy: %0.2f\n', nn.accuracy, svm.pre_trained.accuracy(1), svm.fine_tuned.accuracy(1));
 
+% Plot the feature spaces
+plotFeatureSpace(svm);
+
 end
 
+
+%% Function to plot the feature space
+
+function plotFeatureSpace(svm)
+
+    % plot feature space for training set
+    figure(2);
+    title('Training set features')
+    
+    % use T-SNE to extract features
+    pre_trained = tsne(svm.pre_trained.trainset.features, svm.pre_trained.trainset.labels, 2, 3, 30);
+    fine_tuned = tsne(svm.fine_tuned.trainset.features, svm.fine_tuned.trainset.labels, 2, 3, 30);
+
+    % plot the feature space
+    subplot(1, 2, 1);
+    gscatter(pre_trained(:,1), pre_trained(:,2), svm.pre_trained.trainset.labels);
+    subplot(1, 2, 2);
+    gscatter(fine_tuned(:,1), fine_tuned(:,2), svm.fine_tuned.trainset.labels);
+    
+    % plot feature space for testing set
+    figure(3);
+    title('Testing set features')
+    
+    % use T-SNE to extract features
+    pre_trained = tsne(svm.pre_trained.testset.features, svm.pre_trained.testset.labels, 2, 3, 30);
+    fine_tuned = tsne(svm.fine_tuned.testset.features, svm.fine_tuned.testset.labels, 2, 3, 30);
+
+    % plot the feature space
+    subplot(1, 2, 1);
+    gscatter(pre_trained(:,1), pre_trained(:,2), svm.pre_trained.testset.labels);
+    subplot(1, 2, 2);
+    gscatter(fine_tuned(:,1), fine_tuned(:,2), svm.fine_tuned.testset.labels);
+    
+end
+
+
+%% GetNNAccuracy
 
 function [accuracy] = get_nn_accuracy(net, data)
 
 counter = 0;
-for i = 1:size(data.images.data, 4)
-    
-if(data.images.set(i)==2)    
-res = vl_simplenn(net, data.images.data(:, :,:, i));
-
-[~, estimclass] = max(res(end).x);
-
-if(estimclass == data.images.labels(i))
-    counter = counter+1;
-end
-
-end
-
+for i = 1:size(data.images.data, 4)    
+    if(data.images.set(i)==2)    
+        res = vl_simplenn(net, data.images.data(:, :,:, i));
+        [~, estimclass] = max(res(end).x);
+        if(estimclass == data.images.labels(i))
+            counter = counter+1;
+        end
+    end
 end
 
 accuracy = counter / nnz(data.images.set==2);
 end
+
+%% GetPredictions
 
 function [predictions, accuracy] = get_predictions(data)
 
@@ -49,6 +87,8 @@ model = train(data.trainset.labels, data.trainset.features, sprintf('-c %f -s 0'
 
 
 end
+
+%% GetSVMData
 
 function [trainset, testset] = get_svm_data(data, net)
 
