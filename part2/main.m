@@ -18,7 +18,7 @@ nets.pre_trained = nets.pre_trained.net;
 data = load(fullfile(expdir, 'imdb-caltech.mat'));
 
     
-%%
+%% Train the SVM classifier
 train_svm(nets, data);
 
 

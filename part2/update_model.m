@@ -17,7 +17,7 @@ net.meta.trainOpts.learningRate = [ 0.05*ones(1,20) ...
                                     0.0005*ones(1,10)...
                                     ] ;
 net.meta.trainOpts.weightDecay = 0.0001;
-net.meta.trainOpts.batchSize = 50;
+net.meta.trainOpts.batchSize = 80;
 net.meta.trainOpts.numEpochs = numel(net.meta.trainOpts.learningRate) ;
 
 %% Define network 
