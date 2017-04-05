@@ -18,29 +18,46 @@ fprintf('\n\n\n\n\n\n\n\n');
 
 fprintf('CNN: fine_tuned_accuracy: %0.2f, SVM: pre_trained_accuracy: %0.2f, fine_tuned_accuracy: %0.2f\n', nn.accuracy, svm.pre_trained.accuracy(1), svm.fine_tuned.accuracy(1));
 
-
-% pt_feature = tsne(svm.pre_trained.trainset.features, svm.pre_trained.trainset.labels, 2, 3, 30);
-% ft_feature = tsne(svm.fine_tuned.trainset.features, svm.fine_tuned.trainset.labels, 2, 3, 30);
-% 
-% pt_feature_val = tsne(svm.pre_trained.testset.features, svm.pre_trained.testset.labels, 2, 3, 30);
-% ft_feature_val = tsne(svm.fine_tuned.testset.features, svm.fine_tuned.testset.labels, 2, 3, 30);
-
-% figure(2);
-% title('Training Feature')
-% subplot(1, 2, 1);
-% gscatter(pt_feature(:,1), pt_feature(:,2), svm.pre_trained.trainset.labels);
-% subplot(1, 2, 2);
-% gscatter(ft_feature(:,1), ft_feature(:,2), svm.fine_tuned.trainset.labels);
-% 
-% figure(3); 
-% title('Testing Feature')
-% subplot(1, 2, 1);
-% gscatter(pt_feature_val(:,1), pt_feature_val(:,2), svm.pre_trained.testset.labels);
-% subplot(1, 2, 2);
-% gscatter(ft_feature_val(:,1), ft_feature_val(:,2), svm.fine_tuned.testset.labels);
-
+% Plot the feature spaces
+plotFeatureSpace(svm);
 
 end
+
+
+%% Function to plot the feature space
+
+function plotFeatureSpace(svm)
+
+    % plot feature space for training set
+    figure(2);
+    title('Training set features')
+    
+    % use T-SNE to extract features
+    pre_trained = tsne(svm.pre_trained.trainset.features, svm.pre_trained.trainset.labels, 2, 3, 30);
+    fine_tuned = tsne(svm.fine_tuned.trainset.features, svm.fine_tuned.trainset.labels, 2, 3, 30);
+
+    % plot the feature space
+    subplot(1, 2, 1);
+    gscatter(pre_trained(:,1), pre_trained(:,2), svm.pre_trained.trainset.labels);
+    subplot(1, 2, 2);
+    gscatter(fine_tuned(:,1), fine_tuned(:,2), svm.fine_tuned.trainset.labels);
+    
+    % plot feature space for testing set
+    figure(3);
+    title('Testing set features')
+    
+    % use T-SNE to extract features
+    pre_trained = tsne(svm.pre_trained.testset.features, svm.pre_trained.testset.labels, 2, 3, 30);
+    fine_tuned = tsne(svm.fine_tuned.testset.features, svm.fine_tuned.testset.labels, 2, 3, 30);
+
+    % plot the feature space
+    subplot(1, 2, 1);
+    gscatter(pre_trained(:,1), pre_trained(:,2), svm.pre_trained.testset.labels);
+    subplot(1, 2, 2);
+    gscatter(fine_tuned(:,1), fine_tuned(:,2), svm.fine_tuned.testset.labels);
+    
+end
+
 
 %% GetNNAccuracy
 

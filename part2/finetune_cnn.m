@@ -74,9 +74,23 @@ function [images, labels] = getSimpleNNBatch(imdb, batch)
 % -------------------------------------------------------------------------
 images = imdb.images.data(:,:,:,batch) ;
 labels = imdb.images.labels(1,batch) ;
-if rand > 0.5, images=fliplr(images) ; end
+
+% call the data augmentation function
+images = data_augmentation(images);
 
 end
+
+%% Data Augmentation Function
+
+function [images] = data_augmentation(images)
+    if rand > 0.5
+%         angle = randi(10);             % random degree of rotation
+%         images = imrotate(images, angle, 'nearest', 'crop');   % rotate the images
+%         images = fliplr(images);                  % flip the image
+        images = imnoise(images, 'gaussian', 0, 0.1);      % add gaussian noise to images
+    end
+end
+
 
 %% GetCaltechIMDB
 
@@ -87,11 +101,13 @@ classes = {'airplanes', 'cars', 'faces', 'motorbikes'};
 splits = {'train', 'test'};
 
 %% TODO: Implement your loop here, to create the data structure described in the assignment
+% Initialize the placeholders for the data
 data = zeros(32, 32, 3, 2079);
 sets = [];
 labels = [];
 k=1;
 
+% relevant file paths
 dataset_dir = './../Caltech4/ImageData/';
 train_filename = './../Caltech4/ImageSets/train.txt';
 test_filename = './../Caltech4/ImageSets/test.txt';
@@ -107,6 +123,7 @@ for i = 1:numel(contents)
     foldername = contents(i).name;
     folder_contents = dir(strcat(dataset_dir, foldername, '/*.jpg'));
     
+    % Assign labels based on folder name
     if strmatch('airplanes', foldername)
         label = 1;
     elseif strmatch('cars', foldername)
@@ -122,11 +139,12 @@ for i = 1:numel(contents)
         filename = folder_contents(j).name;
         image = imread(strcat(dataset_dir, foldername, '/', filename));
         
-        % checking for grayscale images
+        % checking for grayscale images, ignore if identified
         if size(image, 3) == 1
             continue
-%             image = cat(3, image, image, image);
         end
+        
+        % resize the images to satisfy the network input size
         image = imresize(image, [32, 32]);
         
         % match the foldername+filename with the train list
@@ -143,9 +161,7 @@ for i = 1:numel(contents)
     end
 end
 
-data = single(data);
 sets = single(sets);
-labels = single(labels);
 
 %%
 % subtract mean

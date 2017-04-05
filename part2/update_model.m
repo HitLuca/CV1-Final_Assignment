@@ -16,7 +16,7 @@ net.meta.trainOpts.learningRate = [ 0.05*ones(1,20) ...
                                     0.005*ones(1,10)...
                                     0.0005*ones(1,10)...
                                     ] ;
-net.meta.trainOpts.weightDecay = 0.00001;
+net.meta.trainOpts.weightDecay = 0.0001;
 net.meta.trainOpts.batchSize = 50;
 net.meta.trainOpts.numEpochs = numel(net.meta.trainOpts.learningRate) ;
 
@@ -73,6 +73,7 @@ net.layers{end+1} = struct('type', 'relu') ;
 %% TODO: Define the structure here, so that the network outputs 4-class rather than 10 (as in the pretrained network)
 % Block 5
 
+% define the dimension of input and output last convolution layer
 NEW_INPUT_SIZE  = 64;
 NEW_OUTPUT_SIZE = 4;
 
